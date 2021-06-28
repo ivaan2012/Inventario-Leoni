@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">Inventario Leoni</string> <string name="sign_up">Registro</string>
+    <string name="titulo">INVENTARIO FISICO</string>
+    <string name="bascula">BASCULA</string>
+
+    <string name="fabricacion">FABRICACION</string>
+    <string name="cantidad">CANTIDAD</string>
+    <string name="noParte">NO. PARTE</string>
+    <string name="bobinaChica">BOBINA CHICA</string>
+    <string name="bobinaGrande">BOBINA GRANDE</string>
+
+    <string name="nuevoNumero">NUEVO NUMERO</string>
+    <string name="nuevaUbicacion">NUEVA UBICACION</string>
+    <string name="excel">EXPORTAR EXCEL</string>
+    <string name="email_doesnt_match">error_formato_email</string>
+    <string name="email_error_no_update">error_mismo_email</string>
+    <string name="password_error">Verifique contraseña</string>
+    <string name="password_error_less_than">La Contraseña debe ser mayor de 4 caracteres</string>
+
+    <string name="update_profile">Actualizar Profile</string>
+    <string name="logout">Log Out</string>
+    <string name="delete">Borrar Profesor</string>
+    <string name="profile">Profile</string>
+    <string name="buscar_btn">BUSCAR</string>
+    <string name="area">Area</string>
+    <string name="passwordConfirm">Confirmar Contraseña</string>
+    <string name="cancelar">CANCELAR</string>
+    <string name="registrar">REGISTRAR</string>
+    <string name="password_not_match">Campos diferentes</string>
+    <string name="error_nombre">Campos Vacios</string>
+
+    <string name="centroCosto">CENTRO DE COSTO:</string>
+    <string name="NumeroSap">NUMERO DE SAP:</string>
+    <string name="numeroEmpleado">NUMERO DE EMPLEADO:</string>
+    <string name="nombreEmpleado">NOMBRE:</string>
+    <string name="puesto">PUESTO:</string>
+    <string name="areaEmpleado">AREA:</string>
+    <string name="grupoEmpleado">GRUPO:</string>
+    <string name="codigoBono">Codigo del Bono:</string>
+
+
+    <string name="criteriosGeneralies">Criterios Generales</string>
+    <string name="criteriosArea">Criterios Area</string>
+    <string name="bono">BONO</string>
+
+    <string name="restriccion">RESTRICCION</string>
+
+
+</resources>
