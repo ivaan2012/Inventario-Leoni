@@ -7,9 +7,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -17,11 +21,14 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 
 
 public class MainActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button btnExcel;
+        Button btnBobinaChica;
+
 
         btnExcel = (Button)findViewById(R.id.btnExcel);
 
@@ -37,10 +46,32 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
             guardar();
+           // leer();
 
             }
         });
+
+        btnBobinaChica = (Button)findViewById(R.id.btnBobinaChica);
+
+        btnBobinaChica.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+
+
+
+                    escribir();
+                }catch (Exception err){
+                    Toast.makeText(MainActivity.this, err.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
+
     }
+
+
     public void guardar() {
         Workbook wb = new HSSFWorkbook();
         Cell cell = null;
@@ -49,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 
         Sheet sheet = null;
-        sheet = wb.createSheet("Lista de usuarios");
+        sheet = wb.createSheet("Lista_de_usuarios");
 
         Row row = null;
 
@@ -70,13 +101,17 @@ public class MainActivity extends AppCompatActivity {
         cell = row.createCell(1);
         cell.setCellValue("Sergio Peralta");
 
-        File file = new File(getExternalFilesDir(null),"Relacion_Usuarios.xls");
+
+
+
+
+        File file = new File(getExternalFilesDir(null),"Inventario_Fisico.xls");
         FileOutputStream outputStream = null;
 
         try {
             outputStream = new FileOutputStream(file);
             wb.write(outputStream);
-            Toast.makeText(getApplicationContext(),"OK", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"OK",Toast.LENGTH_LONG).show();
         } catch (java.io.IOException e) {
             e.printStackTrace();
 
@@ -87,5 +122,53 @@ public class MainActivity extends AppCompatActivity {
                 ex.printStackTrace();
             }
         }
+    }
+    public int leer() {
+        File file = new File(this.getExternalFilesDir(null), "Inventario_Fisico.xls");
+        FileInputStream inputStream = null;
+
+        String datos = "";
+
+        try {
+            inputStream = new FileInputStream(file);
+
+            POIFSFileSystem fileSystem = new POIFSFileSystem(inputStream);
+
+            HSSFWorkbook workbook = new HSSFWorkbook(fileSystem);
+
+            HSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.rowIterator();
+
+            int columna=0;
+            while (rowIterator.hasNext()) {
+                HSSFRow row = (HSSFRow) rowIterator.next();
+                Iterator<Cell> cellIterator = row.cellIterator();
+                while (cellIterator.hasNext()) {
+                    HSSFCell cell = (HSSFCell) cellIterator.next();
+
+                   // datos = datos+" - "+cell.toString();
+                    datos = cell.toString();
+                    columna=cell.getColumnIndex();
+                    columna=cell.getRowIndex();
+
+                }
+
+            }
+
+              //  Toast.makeText(this, datos+"  "+columna, Toast.LENGTH_SHORT).show();
+          //  tvDatos.setText(datos);
+            return columna+2;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void escribir() {
+
+
+
+
     }
 }
