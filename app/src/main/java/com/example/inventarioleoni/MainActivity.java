@@ -1,8 +1,12 @@
 package com.example.inventarioleoni;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,10 +28,24 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 
 public class MainActivity extends AppCompatActivity {
+    private int mYearIni, mMonthIni, mDayIni, sYearIni, sMonthIni, sDayIni;
+    static final int DATE_ID = 0;
+    Calendar C = Calendar.getInstance();
+
+    Button btnExcel;
+    Button btnBobinaChica;
+    EditText ctBascula,ctNoParte,ctCantidad,ctFacturacion;
+
+
+    int monthOfYear,dayOfMonth,year;
 
 
     @Override
@@ -35,8 +53,35 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btnExcel;
-        Button btnBobinaChica;
+        //Date _date = new Date();
+
+        Date _date = new Date();
+
+        SimpleDateFormat getYearFormat = new SimpleDateFormat("yyyy");
+        String currentYear = getYearFormat.format(_date);
+        Calendar c1 = Calendar.getInstance();
+
+
+        Calendar fecha = GregorianCalendar.getInstance();
+
+        mYearIni=fecha.get(Calendar.YEAR);
+
+        mMonthIni=_date.getMonth();
+        mDayIni=_date.getDate();
+
+
+        ctBascula = (EditText) findViewById(R.id.ctBascula);
+
+        ctFacturacion = (EditText) findViewById(R.id.ctFabricacion);
+
+        ctFacturacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog(DATE_ID);
+            }
+        });
+
+        //ctBascula.setInputType(ctBascula.TYPE_NULL);
 
 
         btnExcel = (Button)findViewById(R.id.btnExcel);
@@ -70,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
 
     public void guardar() {
         Workbook wb = new HSSFWorkbook();
@@ -171,4 +215,39 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    private DatePickerDialog.OnDateSetListener mDateSetListener =
+            new DatePickerDialog.OnDateSetListener() {
+                public void onDateSet(DatePicker view, int mYearIni, int mMonthIni, int mDayIni) {
+
+
+
+
+                  //  mYearIni = year;
+                  //  mMonthIni = monthOfYear;
+                 //   mDayIni = dayOfMonth;
+
+                    //Toast.makeText(MainActivity.this, mYearIni+" date picker", Toast.LENGTH_LONG).show();
+                  //  Toast.makeText(MainActivity.this, mMonthIni+" date picker", Toast.LENGTH_LONG).show();
+                  //  Toast.makeText(MainActivity.this, mDayIni+" date picker", Toast.LENGTH_LONG).show();
+                    ctFacturacion.setText((mMonthIni + 1) + "-" + mDayIni + "-" + mYearIni+" ");
+
+                    //colocar_fecha(mYearIni,mMonthIni,mDayIni);
+
+                }
+
+            };
+
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DATE_ID:
+                return new DatePickerDialog(this, mDateSetListener, mYearIni, mMonthIni, mDayIni);
+        }
+
+
+        return null;
+    }
+
 }
