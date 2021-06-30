@@ -20,6 +20,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnExcel;
     Button btnBobinaChica;
+    Button btnBobinaGrande;
     EditText ctBascula,ctNoParte,ctCantidad,ctFacturacion;
 
 
@@ -74,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
 
         ctFacturacion = (EditText) findViewById(R.id.ctFabricacion);
 
+        ctCantidad = (EditText) findViewById(R.id.ctCantidad);
+
+        ctNoParte = (EditText) findViewById(R.id.ctNoParte);
+
         ctFacturacion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-            guardar();
-           // leer();
+           guardar();
+                Toast.makeText(MainActivity.this, leer()+"", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -103,24 +109,43 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 try {
-
-
-
-                    escribir();
+                    //escribir();
+                    escribir(ctBascula.getText().equals("") ? "no capturado" : ctBascula.getText().toString(),
+                            ctNoParte.getText().equals("") ? "no capturado" : ctNoParte.getText().toString(),
+                            Integer.parseInt(ctNoParte.getText().toString())==0 ? 0 : Integer.parseInt(ctNoParte.getText().toString()),
+                            ctFacturacion.getText().toString(),"BOBINA CHICA");
                 }catch (Exception err){
                     Toast.makeText(MainActivity.this, err.getMessage(), Toast.LENGTH_LONG).show();
                 }
+            }
+        });
 
+        btnBobinaGrande = (Button)findViewById(R.id.btnBobinaGrande);
+
+        btnBobinaGrande.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    //escribir();
+                    escribir(ctBascula.getText().equals("") ? "no capturado" : ctBascula.getText().toString(),
+                            ctNoParte.getText().equals("") ? "no capturado" : ctNoParte.getText().toString(),
+                            Integer.parseInt(ctNoParte.getText().toString())==0 ? 0 : Integer.parseInt(ctNoParte.getText().toString()),
+                            ctFacturacion.getText().toString(),"BOBINA GRANDE");
+                }catch (Exception err){
+                    Toast.makeText(MainActivity.this, err.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
 
     }
 
     public void guardar() {
+
         Workbook wb = new HSSFWorkbook();
         Cell cell = null;
         CellStyle cellStyle = wb.createCellStyle();
-        cellStyle.setFillForegroundColor(HSSFColor.LIGHT_BLUE.index);
+        cellStyle.setFillForegroundColor(IndexedColors.BLUE.index);
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 
         Sheet sheet = null;
@@ -130,21 +155,19 @@ public class MainActivity extends AppCompatActivity {
 
         row = sheet.createRow(0);
         cell = row.createCell(0);
-        cell.setCellValue("USUARIO");
-        cell.setCellStyle(cellStyle);
-
-        sheet.createRow(1);
-        cell = row.createCell(1);
-        cell.setCellValue("NOMBRE");
-        cell.setCellStyle(cellStyle);
-
-        row = sheet.createRow(1);
-        cell = row.createCell(0);
-        cell.setCellValue("xcheko51x");
+        cell.setCellValue("BASCULA");
 
         cell = row.createCell(1);
-        cell.setCellValue("Sergio Peralta");
+        cell.setCellValue("NO. PARTE");
 
+        cell = row.createCell(2);
+        cell.setCellValue("CANTIDAD");
+
+        cell = row.createCell(3);
+        cell.setCellValue("FABRICACION");
+
+        cell = row.createCell(4);
+        cell.setCellValue("BOBINA");
 
 
 
@@ -156,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             outputStream = new FileOutputStream(file);
             wb.write(outputStream);
             Toast.makeText(getApplicationContext(),"OK",Toast.LENGTH_LONG).show();
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
 
             Toast.makeText(getApplicationContext(),"NO OK",Toast.LENGTH_LONG).show();
@@ -191,15 +214,15 @@ public class MainActivity extends AppCompatActivity {
                     HSSFCell cell = (HSSFCell) cellIterator.next();
 
                    // datos = datos+" - "+cell.toString();
-                    datos = cell.toString();
-                    columna=cell.getColumnIndex();
+                  //  datos = cell.toString();
+                  //  columna=cell.getColumnIndex();
                     columna=cell.getRowIndex();
 
                 }
 
             }
 
-              //  Toast.makeText(this, datos+"  "+columna, Toast.LENGTH_SHORT).show();
+              // Toast.makeText(this, columna, Toast.LENGTH_SHORT).show();
           //  tvDatos.setText(datos);
             return columna+2;
 
@@ -211,10 +234,187 @@ public class MainActivity extends AppCompatActivity {
 
     public void escribir() {
 
+        File file = new File(this.getExternalFilesDir(null), "Inventario_Fisico.xls");
+        FileInputStream inputStream = null;
+
+        String datos = "";
+        int renglon=0;
+
+        try {
+            inputStream = new FileInputStream(file);
+
+            POIFSFileSystem fileSystem = new POIFSFileSystem(inputStream);
+
+            HSSFWorkbook workbook = new HSSFWorkbook(fileSystem);
+
+            HSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.rowIterator();
+
+            int columna=0;
+            Workbook wba = new HSSFWorkbook();
+            Cell celle = null;
+            CellStyle cellStyle = wba.createCellStyle();
+            cellStyle.setFillForegroundColor(HSSFColor.LIGHT_BLUE.index);
+            cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+            Sheet sheeta = null;
+            sheeta = wba.createSheet("Lista_de_usuarios");
+
+            Row rowa = null;
 
 
+
+            while (rowIterator.hasNext()) {
+                HSSFRow row = (HSSFRow) rowIterator.next();
+                Iterator<Cell> cellIterator = row.cellIterator();
+                while (cellIterator.hasNext()) {
+                    HSSFCell cell = (HSSFCell) cellIterator.next();
+                    HSSFCell cella = (HSSFCell) cellIterator.next();
+
+                    rowa = sheeta.createRow(renglon);
+                    celle = rowa.createCell(0);
+                    celle.setCellValue(cell.toString());
+
+                    celle = rowa.createCell(1);
+                    celle.setCellValue(cella.toString());
+
+                   renglon++;
+                }//primer while
+            }//segundo while
+
+            File filea = new File(getExternalFilesDir(null),"Inventario_Fisico.xls");
+            FileOutputStream outputStreama = null;
+
+            try {
+                outputStreama = new FileOutputStream(filea);
+                wba.write(outputStreama);
+                Toast.makeText(getApplicationContext(),"OK",Toast.LENGTH_LONG).show();
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+
+                Toast.makeText(getApplicationContext(),"NO OK",Toast.LENGTH_LONG).show();
+                try {
+                    outputStreama.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }//ultimo try
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
+
+    public void escribir(String bascula, String noParte, int cantidad, String fabricacion, String bobina) {
+
+        File file = new File(this.getExternalFilesDir(null), "Inventario_Fisico.xls");
+        FileInputStream inputStream = null;
+
+        String datos = "";
+        int renglon=0;
+
+        try {
+            inputStream = new FileInputStream(file);
+
+            POIFSFileSystem fileSystem = new POIFSFileSystem(inputStream);
+
+            HSSFWorkbook workbook = new HSSFWorkbook(fileSystem);
+
+            HSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.rowIterator();
+
+            int columna=0;
+            Workbook wba = new HSSFWorkbook();
+            Cell celle = null;
+            CellStyle cellStyle = wba.createCellStyle();
+            cellStyle.setFillForegroundColor(HSSFColor.LIGHT_BLUE.index);
+            cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+            Sheet sheeta = null;
+            sheeta = wba.createSheet("Lista_de_usuarios");
+
+            Row rowa = null;
+
+
+
+            while (rowIterator.hasNext()) {
+                HSSFRow row = (HSSFRow) rowIterator.next();
+                Iterator<Cell> cellIterator = row.cellIterator();
+                while (cellIterator.hasNext()) {
+                    HSSFCell cell = (HSSFCell) cellIterator.next();
+                    HSSFCell cella = (HSSFCell) cellIterator.next();
+                    HSSFCell celll = (HSSFCell) cellIterator.next();
+                    HSSFCell cellla = (HSSFCell) cellIterator.next();
+                    HSSFCell celllaa = (HSSFCell) cellIterator.next();
+
+
+                    rowa = sheeta.createRow(renglon);
+                    celle = rowa.createCell(0);
+                    celle.setCellValue(cell.toString());
+
+                    celle = rowa.createCell(1);
+                    celle.setCellValue(cella.toString());
+
+                    celle = rowa.createCell(2);
+                    celle.setCellValue(celll.toString());
+
+                    celle = rowa.createCell(3);
+                    celle.setCellValue(cellla.toString());
+
+                    celle = rowa.createCell(4);
+                    celle.setCellValue(celllaa.toString());
+
+
+                    renglon++;
+                }//primer while
+            }//segundo while
+
+
+            rowa = sheeta.createRow(renglon);
+            celle = rowa.createCell(0);
+            celle.setCellValue(bascula);
+
+            celle = rowa.createCell(1);
+            celle.setCellValue(noParte);
+
+            celle = rowa.createCell(2);
+            celle.setCellValue(cantidad);
+
+            celle = rowa.createCell(3);
+            celle.setCellValue(fabricacion);
+
+            celle = rowa.createCell(4);
+            celle.setCellValue(bobina.toString());
+
+
+
+            File filea = new File(getExternalFilesDir(null),"Inventario_Fisico.xls");
+            FileOutputStream outputStreama = null;
+
+            try {
+                outputStreama = new FileOutputStream(filea);
+                wba.write(outputStreama);
+                Toast.makeText(getApplicationContext(),"OK",Toast.LENGTH_LONG).show();
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+
+                Toast.makeText(getApplicationContext(),"NO OK",Toast.LENGTH_LONG).show();
+                try {
+                    outputStreama.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }//ultimo try
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     private DatePickerDialog.OnDateSetListener mDateSetListener =
             new DatePickerDialog.OnDateSetListener() {
